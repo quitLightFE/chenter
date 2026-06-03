@@ -1,0 +1,837 @@
+"use client"
+import React, { useState } from "react";
+import {
+  Box,
+  Drawer,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Stack,
+  Card,
+  CardContent,
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Grid,
+  Button,
+  Badge,
+  Menu,
+  MenuItem
+} from "@mui/material";
+import {
+  Dashboard as DashboardIcon,
+  School as SchoolIcon,
+  Assignment as AssignmentIcon,
+  People as PeopleIcon,
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  TrendingUp as TrendingUpIcon,
+  CheckCircle as CheckCircleIcon
+} from "@mui/icons-material";
+
+const DRAWER_WIDTH = 280;
+
+const Dashboard = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const user = {
+    name: "Иван Петров",
+    role: "преподаватель",
+    avatar: "https://i.pravatar.cc/150?img=12"
+  };
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const navigationItems = [
+    { label: "Обзор", icon: <DashboardIcon />, active: true },
+    { label: "Курсы", icon: <SchoolIcon /> },
+    { label: "Задания", icon: <AssignmentIcon /> },
+    { label: "Студенты", icon: <PeopleIcon /> }
+  ];
+
+  const drawerContent = (
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {/* Logo Section */}
+      <Box sx={{ p: 3, pb: 2 }}>
+        <Typography
+          variant="h6"
+          fontWeight={700}
+          sx={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            fontSize: "1.4rem"
+          }}
+        >
+          IT Academy
+        </Typography>
+      </Box>
+
+      <Divider sx={{ bgcolor: "rgba(255,255,255,0.1)" }} />
+
+      {/* Navigation */}
+      <List sx={{ px: 2, py: 3, flex: 1 }}>
+        {navigationItems.map((item, idx) => (
+          <ListItem key={idx} disablePadding sx={{ mb: 1 }}>
+            <ListItemButton
+              sx={{
+                borderRadius: 2,
+                bgcolor: item.active ? "rgba(102, 126, 234, 0.15)" : "transparent",
+                color: item.active ? "#667eea" : "rgba(255,255,255,0.7)",
+                "&:hover": {
+                  bgcolor: item.active
+                    ? "rgba(102, 126, 234, 0.25)"
+                    : "rgba(255,255,255,0.08)"
+                },
+                transition: "all 0.2s ease",
+                py: 1.5
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: "inherit",
+                  minWidth: 40
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{
+                  fontWeight: item.active ? 600 : 500,
+                  fontSize: "0.95rem"
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+
+      {/* User Section */}
+      <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            p: 2,
+            borderRadius: 2,
+            bgcolor: "rgba(255,255,255,0.05)",
+            "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+            cursor: "pointer",
+            transition: "all 0.2s ease"
+          }}
+        >
+          <Avatar
+            src={user.avatar}
+            sx={{
+              width: 40,
+              height: 40,
+              border: "2px solid rgba(255,255,255,0.2)"
+            }}
+          />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              fontWeight={600}
+              sx={{ color: "white", fontSize: "0.9rem" }}
+            >
+              {user.name}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "rgba(255,255,255,0.6)",
+                textTransform: "capitalize",
+                fontSize: "0.8rem"
+              }}
+            >
+              {user.role}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ display: "flex", minHeight: "100dvh" }}>
+      {/* App Bar */}
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          ml: { sm: `${DRAWER_WIDTH}px` },
+          background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+          color: "#1f2937",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+        }}
+      >
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Box>
+              <Typography variant="h6" fontWeight={700}>
+                Обзор
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mt: -0.5 }}>
+                Добро пожаловать, {user.name}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Stack direction="row" spacing={1} sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton color="inherit">
+              <Badge badgeContent={3} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              color="inherit"
+              onClick={handleMenuOpen}
+              sx={{ ml: 1 }}
+            >
+              <Avatar src={user.avatar} sx={{ width: 32, height: 32 }} />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={handleMenuClose}>
+                <SettingsIcon sx={{ mr: 1 }} fontSize="small" />
+                Настройки
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose}>
+                <LogoutIcon sx={{ mr: 1 }} fontSize="small" />
+                Выход
+              </MenuItem>
+            </Menu>
+          </Stack>
+        </Toolbar>
+      </AppBar>
+
+      {/* Sidebar Drawer */}
+      <Box
+        component="nav"
+        sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
+      >
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+              background: "linear-gradient(135deg, #1f2937 0%, #374151 100%)",
+              color: "white"
+            }
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+              background: "linear-gradient(135deg, #1f2937 0%, #374151 100%)",
+              color: "white",
+              borderRight: "1px solid rgba(255,255,255,0.1)"
+            }
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+      </Box>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: { xs: 2, sm: 3, md: 4 },
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          bgcolor: "linear-gradient(135deg, #e0e7ff 0%, #cffafe 100%)",
+          minHeight: "100vh",
+          mt: 8
+        }}
+      >
+        {/* Stats Cards */}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {[
+            { label: "Активные курсы", value: "12", icon: SchoolIcon, color: "#667eea" },
+            { label: "Студентов", value: "148", icon: PeopleIcon, color: "#f59e0b" },
+            { label: "Заданий", value: "34", icon: AssignmentIcon, color: "#10b981" }
+          ].map((stat, idx) => {
+            const IconComponent = stat.icon;
+            return (
+              <Grid key={idx} size={{ xs: 12, sm: 6, md: 4 }}>
+                <Card
+                  sx={{
+                    borderRadius: 3,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    border: "1px solid rgba(255,255,255,0.5)",
+                    bgcolor: "white",
+                    overflow: "hidden",
+                    position: "relative",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: "translateY(-4px)",
+                      boxShadow: "0 8px 24px rgba(0,0,0,0.12)"
+                    }
+                  }}
+                >
+                  <CardContent>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <Box>
+                        <Typography color="textSecondary" sx={{ fontSize: "0.9rem", fontWeight: 500 }}>
+                          {stat.label}
+                        </Typography>
+                        <Typography variant="h4" fontWeight={700} sx={{ mt: 1, color: "#1f2937" }}>
+                          {stat.value}
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          p: 1.5,
+                          borderRadius: 2,
+                          bgcolor: `${stat.color}15`,
+                          color: stat.color
+                        }}
+                      >
+                        <IconComponent fontSize="large" />
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+
+        {/* Recent Activity */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Card
+              sx={{
+                borderRadius: 3,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(255,255,255,0.5)",
+                bgcolor: "white"
+              }}
+            >
+              <CardContent>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+                  <Typography variant="h6" fontWeight={700}>
+                    Последняя активность
+                  </Typography>
+                  <Button size="small" variant="text" sx={{ color: "#667eea" }}>
+                    Смотреть все
+                  </Button>
+                </Box>
+
+                <Stack spacing={2}>
+                  {[
+                    {
+                      title: "Новый урок опубликован",
+                      desc: "JavaScript: Async/Await",
+                      time: "5 минут назад",
+                      color: "#667eea"
+                    },
+                    {
+                      title: "Студент сдал задание",
+                      desc: "Алексей Иванов - DOM Manipulation",
+                      time: "1 час назад",
+                      color: "#10b981"
+                    },
+                    {
+                      title: "Новый студент зарегистрирован",
+                      desc: "maria.sokolova@email.com",
+                      time: "3 часа назад",
+                      color: "#f59e0b"
+                    },
+                    {
+                      title: "Курс завершен",
+                      desc: "React Основы - 24 студента",
+                      time: "1 день назад",
+                      color: "#8b5cf6"
+                    }
+                  ].map((activity, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        p: 2.5,
+                        borderRadius: 2.5,
+                        bgcolor: "#f9fafb",
+                        border: "1px solid #e5e7eb",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          bgcolor: "#f3f4f6",
+                          borderColor: activity.color
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: "flex", gap: 2 }}>
+                        <Box
+                          sx={{
+                            width: 4,
+                            height: 4,
+                            borderRadius: "50%",
+                            bgcolor: activity.color,
+                            mt: 1,
+                            flexShrink: 0
+                          }}
+                        />
+                        <Box sx={{ flex: 1 }}>
+                          <Typography fontWeight={600} sx={{ color: "#1f2937" }}>
+                            {activity.title}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
+                            {activity.desc}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: "block" }}>
+                            {activity.time}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  ))}
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Stats Overview */}
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Card
+              sx={{
+                borderRadius: 3,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(255,255,255,0.5)",
+                bgcolor: "white"
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>
+                  Статистика студентов
+                </Typography>
+
+                <Stack spacing={2.5}>
+                  {[
+                    { label: "Активных студентов", value: "142", percent: 95 },
+                    { label: "Завершили курсы", value: "38", percent: 68 },
+                    { label: "Ожидают проверки", value: "12", percent: 45 }
+                  ].map((stat, idx) => (
+                    <Box key={idx}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                        <Typography variant="body2" sx={{ color: "#6b7280", fontWeight: 500 }}>
+                          {stat.label}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#1f2937", fontWeight: 600 }}>
+                          {stat.value}
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: 8,
+                          borderRadius: 4,
+                          bgcolor: "#e5e7eb",
+                          overflow: "hidden"
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: "100%",
+                            width: `${stat.percent}%`,
+                            borderRadius: 4,
+                            background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+                            transition: "width 0.3s ease"
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                  ))}
+                </Stack>
+
+                <Divider sx={{ my: 3 }} />
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    borderRadius: 2,
+                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    textTransform: "none",
+                    py: 1.5,
+                    fontWeight: 600,
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 8px 16px rgba(102, 126, 234, 0.4)"
+                    },
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  Подробный отчет
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
+  );
+};
+
+export default Dashboard;
+
+
+// "use client";
+
+// import { useEffect,useState } from "react";
+// import {
+//   Box,
+//   Typography,
+//   Stack,
+//   Button,
+//   Divider,
+//   Avatar,
+//   Grid,
+//   Card,
+//   CardContent,
+//   CircularProgress,
+//   IconButton
+// } from "@mui/material";
+
+// import DashboardIcon from "@mui/icons-material/Dashboard";
+// import SchoolIcon from "@mui/icons-material/School";
+// import AssignmentIcon from "@mui/icons-material/Assignment";
+// import PeopleIcon from "@mui/icons-material/People";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
+// import pb from "../../lib/pocketbase";
+// import { useRouter } from "next/navigation";
+// import Link from "next/link";
+
+// // Пример данных пользователя (можно потом сделать через props)
+// /*const user = {
+//   name: "Данил",
+//   role: "Преподаватель"
+// };
+// */
+// export default function Dashboard() {
+//   const router = useRouter();
+//   const [user, setUser] = useState(null);
+
+//   useEffect(() => {
+//   const currentUser = pb.authStore.model;
+//   	setUser(currentUser)
+//     if (!currentUser) {
+//       router.replace("/login");
+//     }
+//   }, [router]);
+
+
+//   if (!user) {
+//     return (
+//       <Box
+//         sx={{
+//           display: "flex",
+//           minHeight: "100dvh",
+//           alignItems: "center",
+//           justifyContent: "center",
+//           bgcolor: "#f5f7fb",
+//           gap:3
+//         }}
+//       >
+//       	<CircularProgress/>
+//         <Typography>Проверка авторизации...</Typography>
+      	
+//       </Box>
+//     );
+//   }
+//   console.log(user);
+//   return (
+//     <>
+//       <Box
+//         sx={{
+//           display: "flex",
+//           minHeight: "100dvh",
+//           background: "linear-gradient(135deg, #d1dbf2 0%, #6485d2 100%)"
+//         }}
+//       >
+//         {/* ==================== SIDEBAR ==================== */}
+//         <Box
+//           sx={{
+//             width: 260,
+//             // bgcolor: "#111827",
+//             background: "linear-gradient(135deg, #111827 0%, #596c96 100%)",
+//             color: "white",
+//             display: { xs: "none", md: "flex" },
+//             flexDirection: "column",
+//             p: 3
+//           }}
+//         >
+//           <Typography variant="h5" fontWeight={700} mb={4}>
+//             IT Academy
+//           </Typography>
+
+//           <Stack spacing={1}>
+//             <Button
+//               startIcon={<DashboardIcon />}
+//               sx={{
+//                 justifyContent: "flex-start",
+//                 color: "white",
+//                 bgcolor: "rgba(255,255,255,0.08)",
+//                 py: 1.5,
+//                 borderRadius: 3,
+//                 "&:hover": { bgcolor: "rgba(255,255,255,0.12)" }
+//               }}
+//             >
+//               Dashboard
+//             </Button>
+
+//             <Button
+//               startIcon={<SchoolIcon />}
+//               sx={{
+//                 justifyContent: "flex-start",
+//                 color: "#cbd5e1",
+//                 py: 1.5,
+//                 borderRadius: 3,
+//                 "&:hover": { bgcolor: "rgba(255,255,255,0.08)" }
+//               }}
+//             >
+//               Курсы
+//             </Button>
+
+//             <Button
+//               startIcon={<AssignmentIcon />}
+//               sx={{
+//                 justifyContent: "flex-start",
+//                 color: "#cbd5e1",
+//                 py: 1.5,
+//                 textDecoration: "none",
+//                 borderRadius: 3,
+//                 "&:hover": { bgcolor: "rgba(255,255,255,0.08)" }
+//               }}
+//               href="/tasks"
+//               component={Link}
+//             >
+//               Задания
+//             </Button>
+
+//             <Button
+//               startIcon={<PeopleIcon />}
+//               sx={{
+//                 justifyContent: "flex-start",
+//                 color: "#cbd5e1",
+//                 py: 1.5,
+//                 borderRadius: 3,
+//                 "&:hover": { bgcolor: "rgba(255,255,255,0.08)" }
+//               }}
+//             >
+//               Студенты
+//             </Button>
+//           </Stack>
+
+//           <Box sx={{ mt: "auto" }}>
+//             <Divider sx={{ bgcolor: "rgba(255,255,255,0.1)", mb: 2 }} />
+
+//             <Box
+//               sx={{
+//                 display: "flex",
+//                 alignItems: "center",
+//                 gap: 2
+//               }}
+//             >
+//               <Avatar sx={{ bgcolor: "#3b82f6" }} src={user?.avatar ?? ""} />
+//               <Box>
+//                 <Typography fontWeight={600} sx={{color: "white"}}>
+//                   {user?.name ?? "username"}
+//                 </Typography>
+//                 <Typography
+//                   variant="body2"
+//                   sx={{ color: "#94a3b8", textTransform: "capitalize" }}
+//                 >
+//                   {user?.role ?? "role"}
+//                 </Typography>
+//               </Box>
+//             </Box>
+//           </Box>
+//         </Box>
+
+//         {/* ==================== MAIN CONTENT ==================== */}
+//         <Box sx={{ flex: 1 }}>
+//           {/* TOPBAR */}
+//           <Box
+//             sx={{
+//               height: 80,
+//               //bgcolor: "white",
+//               background: "linear-gradient(135deg, #d4dae8 0%, #8d9cbf 100%)",
+
+//               px: 4,
+//               display: "flex",
+//               alignItems: "center",
+//               justifyContent: "space-between",
+//               borderBottom: "1px solid #e2e8f0"
+//             }}
+//           >
+//             <Box>
+//               <Typography variant="h5" fontWeight={700}>
+//                 Dashboard
+//               </Typography>
+//               <Typography variant="body2" color="text.secondary">
+//                 Добро пожаловать обратно {user?.name}
+//               </Typography>
+//             </Box>
+
+//             <Stack direction="row" spacing={2}>
+//               <IconButton>
+//                 <NotificationsIcon />
+//               </IconButton>
+//               <Avatar sx={{ bgcolor: "#3b82f6" }} src={user?.avatar ?? ""} />
+//             </Stack>
+//           </Box>
+
+//           {/* CONTENT */}
+//           <Box sx={{ p: 4 }}>
+//             {/* STATS */}
+//             <Grid container spacing={3}>
+//               <Grid size={{ xs: 12, md: 4 }}>
+//                 <Card
+//                   sx={{
+//                     borderRadius: 5,
+//                     boxShadow: "none",
+//                     border: "1px solid #e2e8f0"
+//                   }}
+//                 >
+//                   <CardContent>
+//                     <Typography color="text.secondary">Курсы</Typography>
+//                     <Typography variant="h4" fontWeight={700} mt={1}>
+//                       12
+//                     </Typography>
+//                   </CardContent>
+//                 </Card>
+//               </Grid>
+
+//               <Grid size={{ xs: 12, md: 4 }}>
+//                 <Card
+//                   sx={{
+//                     borderRadius: 5,
+//                     boxShadow: "none",
+//                     border: "1px solid #e2e8f0"
+//                   }}
+//                 >
+//                   <CardContent>
+//                     <Typography color="text.secondary">Студенты</Typography>
+//                     <Typography variant="h4" fontWeight={700} mt={1}>
+//                       148
+//                     </Typography>
+//                   </CardContent>
+//                 </Card>
+//               </Grid>
+
+//               <Grid size={{ xs: 12, md: 4 }}>
+//                 <Card
+//                   sx={{
+//                     borderRadius: 5,
+//                     boxShadow: "none",
+//                     border: "1px solid #e2e8f0"
+//                   }}
+//                 >
+//                   <CardContent>
+//                     <Typography color="text.secondary">Задания</Typography>
+//                     <Typography variant="h4" fontWeight={700} mt={1}>
+//                       34
+//                     </Typography>
+//                   </CardContent>
+//                 </Card>
+//               </Grid>
+//             </Grid>
+
+//             {/* RECENT ACTIVITY */}
+//             <Card
+//               sx={{
+//                 mt: 4,
+//                 borderRadius: 5,
+//                 boxShadow: "none",
+//                 border: "1px solid #e2e8f0"
+//               }}
+//             >
+//               <CardContent>
+//                 <Typography variant="h6" fontWeight={700} mb={3}>
+//                   Последняя активность
+//                 </Typography>
+
+//                 <Stack spacing={2}>
+//                   <Box
+//                     sx={{
+//                       p: 2,
+//                       borderRadius: 3,
+//                       bgcolor: "#f8fafc"
+//                     }}
+//                   >
+//                     <Typography fontWeight={600}>
+//                       Новый урок опубликован
+//                     </Typography>
+//                     <Typography variant="body2" color="text.secondary">
+//                       JavaScript Variables
+//                     </Typography>
+//                   </Box>
+
+//                   <Box
+//                     sx={{
+//                       p: 2,
+//                       borderRadius: 3,
+//                       bgcolor: "#f8fafc"
+//                     }}
+//                   >
+//                     <Typography fontWeight={600}>
+//                       Новый студент зарегистрирован
+//                     </Typography>
+//                     <Typography variant="body2" color="text.secondary">
+//                       student@gmail.com
+//                     </Typography>
+//                   </Box>
+//                 </Stack>
+//               </CardContent>
+//             </Card>
+//           </Box>
+//         </Box>
+//       </Box>
+//     </>
+//   );
+// }
+

@@ -1,29 +1,39 @@
 "use client";
+
 import React, { useState } from "react";
-import { Box, CssBaseline, useMediaQuery, Alert } from "@mui/material";
+import {
+  Box,
+  CssBaseline,
+  useMediaQuery,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import dynamic from "next/dynamic";
+
 import EditorToolbar from "./EditorToolbar";
 import EditorTabs from "./EditorTabs";
 import CodeEditor from "./CodeEditor";
 import PreviewFrame from "./PreviewFrame";
+
 import { usePreview } from "@/hooks/usePreview";
 import { useSubmission } from "@/hooks/useSubmission";
-import { useTask } from "@/hooks/useTask";
 import { getCurrentUser } from "@/services";
 
-export default function EditorLayout({task, taskId }) {
+// Динамически импортируем Split только на клиенте (SSR: false)
+const Split = dynamic(() => import("react-split"), { ssr: false });
+
+export default function EditorLayout({ task, taskId }) {
   const isMobile = useMediaQuery("(max-width: 900px)");
 
   const [tab, setTab] = useState(0);
   const [showPreview, setShowPreview] = useState(!isMobile);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  // Получаем задачу
-  //const { task, loading: taskLoading } = useTask(taskId);
-
-  // Получаем/сохраняем submission (нужен studentId)
+  // Получаем/сохраняем submission
   const { id } = getCurrentUser();
   const { submission, saveSubmission, submitForReview, saving } = useSubmission(
     taskId,
-    id
+    id,
   );
 
   const {
@@ -33,13 +43,13 @@ export default function EditorLayout({task, taskId }) {
     setHtmlCode,
     setCssCode,
     setJsCode,
-    srcDoc
-  } = usePreview(task, submission); // передаём submission для начальных значений
+    srcDoc,
+  } = usePreview(task, submission);
 
   const handleSave = async () => {
     try {
       await saveSubmission(htmlCode, cssCode, jsCode);
-      // Можно добавить toast уведомление
+      setSnackbarOpen(true);
     } catch (err) {
       console.error("Save failed", err);
     }
@@ -55,17 +65,16 @@ export default function EditorLayout({task, taskId }) {
     }
   };
 
-  //if (taskLoading) return <Box sx={{ p: 4 }}>Загрузка задания...</Box>;
-
   return (
     <>
       <CssBaseline />
       <Box
         sx={{
-          height: "100vh",
+          height: "100dvh",
           display: "flex",
           flexDirection: "column",
-          bgcolor: "#1e1e1e"
+          bgcolor: "#1e1e1e",
+          overflow: "hidden",
         }}
       >
         <EditorToolbar
@@ -73,8 +82,8 @@ export default function EditorLayout({task, taskId }) {
           onSubmit={handleSubmit}
           onOpenPreview={() => {
             const win = window.open();
-            win.document.write(srcDoc);
-            win.document.close();
+            win?.document.write(srcDoc);
+            win?.document.close();
           }}
           isMobile={isMobile}
           showPreview={showPreview}
@@ -84,39 +93,102 @@ export default function EditorLayout({task, taskId }) {
 
         <EditorTabs tab={tab} setTab={setTab} />
 
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            overflow: "hidden"
-          }}
-        >
-          <Box
-            sx={{
-              flex: isMobile && !showPreview ? 1 : isMobile ? 0.5 : 1,
-              display: isMobile && showPreview ? "none" : "flex"
-            }}
-          >
-            <CodeEditor
-              tab={tab}
-              htmlCode={htmlCode}
-              cssCode={cssCode}
-              jsCode={jsCode}
-              setHtmlCode={setHtmlCode}
-              setCssCode={setCssCode}
-              setJsCode={setJsCode}
-              key={tab}
-            />
-          </Box>
+        {/* Основная рабочая область */}
+        <Box sx={{ flex: 1, overflow: "hidden",
+          "& .gutter.gutter-horizontal": {
+                  backgroundColor: "#2d2d2d",
+                  cursor: "col-resize",
+                  transition: "background-color 0.2s",
+                },
 
-          <PreviewFrame
-            srcDoc={srcDoc}
-            isMobile={isMobile}
-            showPreview={showPreview}
-          />
+                "& .gutter.gutter-horizontal:hover": {
+                  backgroundColor: "#007acc" /* Подсветка при наведении */,
+                },
+         }}>
+          {isMobile ? (
+            // Мобильная версия — переключение между редактором и превью
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {!showPreview ? (
+                <Box sx={{ flex: 1 }}>
+                  <CodeEditor
+                    tab={tab}
+                    htmlCode={htmlCode}
+                    cssCode={cssCode}
+                    jsCode={jsCode}
+                    setHtmlCode={setHtmlCode}
+                    setCssCode={setCssCode}
+                    setJsCode={setJsCode}
+                    key={tab}
+                  />
+                </Box>
+              ) : (
+                <PreviewFrame
+                  srcDoc={srcDoc}
+                  isMobile={isMobile}
+                  showPreview={showPreview}
+                />
+              )}
+            </Box>
+          ) : (
+            // Десктопная версия — с использованием react-split без SSR
+            <Split
+              sizes={[50, 50]}
+              minSize={300}
+              gutterSize={8}
+              direction="horizontal"
+              style={{ display: "flex", height: "100%", width: "100%" }}
+            >
+              {/* Левая панель: Редактор */}
+              <Box sx={{ height: "100%", overflow: "hidden",
+               }}>
+                <CodeEditor
+                  tab={tab}
+                  htmlCode={htmlCode}
+                  cssCode={cssCode}
+                  jsCode={jsCode}
+                  setHtmlCode={setHtmlCode}
+                  setCssCode={setCssCode}
+                  setJsCode={setJsCode}
+                  key={tab}
+                />
+              </Box>
+
+              {/* Правая панель: Превью */}
+              <Box sx={{ height: "100%" }}>
+                <PreviewFrame
+                  srcDoc={srcDoc}
+                  isMobile={isMobile}
+                  showPreview={true}
+                />
+              </Box>
+            </Split>
+          )}
         </Box>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000} // Уведомление исчезнет само через 3 секунды
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{
+          vertical: isMobile ? "bottom" : "top",
+          horizontal: isMobile ? "center" : "right",
+        }} // Появится снизу справа
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Прогресс успешно сохранен!
+        </Alert>
+      </Snackbar>
     </>
   );
 }

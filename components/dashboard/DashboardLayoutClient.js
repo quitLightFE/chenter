@@ -44,8 +44,10 @@ export default function DashboardLayoutClient({ children }) {
   // Пока клиент не смонтирован, возвращаем пустой контейнер или скелетон,
   // чтобы серверная разметка совпала с первоначальной клиентской
   if (!mounted) {
-    return <Loader />
-;
+    return <Loader />;
+  }
+  if (!user) {
+    redirect("/login")
   }
   return (
     <Box sx={{ display: "flex", minHeight: "100dvh" }}>

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -21,7 +21,9 @@
     "pocketbase": "^0.26.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-hook-form": "^7.76.0"
+    "react-hook-form": "^7.76.0",
+    "react-resizable-panels": "^4.11.2",
+    "react-split": "^2.0.14"
   },
   "devDependencies": {
     "@types/node": "25.9.1",
